@@ -1,5 +1,5 @@
 ################################################################################
-# Public Route Table
+# Inside Route Table
 ################################################################################
 # Deploys a single custom route table associated with each outside subnet.
 # Includes routes to Internet Gateway and local VPC.
@@ -17,7 +17,7 @@ resource "aws_route_table" "outside" {
   #   gateway_id = aws_internet_gateway.int_gateway.id
   # }
 }
-/*
+
 resource "aws_route" "public_internet_gateway" {
   count = var.create_igw ? 1 : 0
 
@@ -29,7 +29,7 @@ resource "aws_route" "public_internet_gateway" {
     create = "5m"
   }
 }
-*/
+
 resource "aws_route_table_association" "AssociationForRouteTablePublic" {
   count = length(var.outside_subnets)
   subnet_id = element(aws_subnet.outside.*.id,count.index)
@@ -37,7 +37,7 @@ resource "aws_route_table_association" "AssociationForRouteTablePublic" {
 }
 
 ################################################################################
-# Private Route Tables
+# Outside Route Tables
 ################################################################################
 # Deploys route tables associated with each inside subnet.
 # Each table includes a route to the NAT GW in the corresponding outside subnet and a route to the local VPC.
@@ -56,7 +56,7 @@ resource "aws_route_table" "inside" {
   #   gateway_id = aws_nat_gateway.nat_gateway[count.index].id
   # }
 }
-/*
+
 resource "aws_route" "nat_gateway_priv" {
   count = var.create_igw && length(var.inside_subnets) > 0 ? 1 : 0
 
@@ -68,7 +68,7 @@ resource "aws_route" "nat_gateway_priv" {
     create = "5m"
   }
 }
-*/
+
 resource "aws_route_table_association" "AssociationForRouteTablePrivate" {
   count = length(var.inside_subnets)
   subnet_id = element(aws_subnet.inside.*.id,count.index)
@@ -76,7 +76,7 @@ resource "aws_route_table_association" "AssociationForRouteTablePrivate" {
 }
 
 ################################################################################
-# Database Route Tables
+# MGMT Route Tables
 ################################################################################
 # Each table includes a route to the NAT GW in the corresponding outside subnet and a route to the local VPC.
 
@@ -89,8 +89,8 @@ resource "aws_route_table" "mgmt" {
     Name = "${var.name}-MGMT-${count.index+1}"
   }
 }
-/*
-resource "aws_route" "nat_gateway_db" {
+
+resource "aws_route" "nat_gateway_mgmt" {
   count = var.create_igw && length(var.mgmt_subnets) > 0 ? 1 : 0
 
   route_table_id         = aws_route_table.mgmt[count.index].id
@@ -101,7 +101,7 @@ resource "aws_route" "nat_gateway_db" {
     create = "5m"
   }
 }
-*/
+
 resource "aws_route_table_association" "AssociationForRouteTableDB" {
   count = length(var.mgmt_subnets)
   subnet_id = element(aws_subnet.mgmt.*.id,count.index)
