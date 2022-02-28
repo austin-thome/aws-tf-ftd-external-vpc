@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-west-1"
+  region = "us-east-1"
 }
 
 module "vpc" {
@@ -44,14 +44,14 @@ module "vpc" {
   dhcp_options_netbios_node_type = ""
 
   # If set to "false", no internet gateway will be created.
-  create_igw = true
+  create_igw = false
 
   # If set to "true", a VPN gateway will be created. You can control propagation using
   # the options beneath.
-  enable_vpn_gateway = false
-  propagate_public_route_tables_vgw = false
-  propagate_private_route_tables_vgw = false
-  propagate_database_route_tables_vgw = false
+  enable_vpn_gateway = true
+  propagate_outside_route_tables_vgw = true
+  propagate_inside_route_tables_vgw = true
+  propagate_mgmt_route_tables_vgw = true
 
   # If enable_vpn_gateway was set to "true", then customer gateways will be created if you also
   # include gateway information below.

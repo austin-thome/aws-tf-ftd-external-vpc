@@ -3,10 +3,10 @@
 
 terraform {
   backend "s3" {
-    bucket = "example-s3-bucket"
+    bucket = "rr-internal-transit-tf-state"
     region = "us-east-1"
-    key = "example/example.tfstate"
-    dynamodb_table = "example-tf-state"
+    key = "aws-tf-ftd-internal-vpc.tfstate"
+    dynamodb_table = "tf-state"
     encrypt = true
   }
 }

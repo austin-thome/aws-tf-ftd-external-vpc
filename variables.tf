@@ -246,19 +246,19 @@ variable "vpn_gateway_az" {
   default     = null
 }
 
-variable "propagate_database_route_tables_vgw" {
+variable "propagate_mgmt_route_tables_vgw" {
   description = "Should be true if you want route table propagation"
   type        = bool
   default     = false
 }
 
-variable "propagate_private_route_tables_vgw" {
+variable "propagate_inside_route_tables_vgw" {
   description = "Should be true if you want route table propagation"
   type        = bool
   default     = false
 }
 
-variable "propagate_public_route_tables_vgw" {
+variable "propagate_outside_route_tables_vgw" {
   description = "Should be true if you want route table propagation"
   type        = bool
   default     = false
