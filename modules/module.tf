@@ -6,7 +6,7 @@ module "vpc" {
   source = "../"
   # The resources for this file live two directories above, in the root directory.
 
-  name = "ftd-internal"
+  name = "ftd-external"
   # The name will be used to identify all resources. For example, subnets will be tagged with the name
   # along with the type of subnet (public, private, or db).
 
@@ -44,14 +44,14 @@ module "vpc" {
   dhcp_options_netbios_node_type = ""
 
   # If set to "false", no internet gateway will be created.
-  create_igw = false
+  create_igw = true
 
   # If set to "true", a VPN gateway will be created. You can control propagation using
   # the options beneath.
-  enable_vpn_gateway = true
-  propagate_outside_route_tables_vgw = true
-  propagate_inside_route_tables_vgw = true
-  propagate_mgmt_route_tables_vgw = true
+  enable_vpn_gateway = false
+  propagate_outside_route_tables_vgw = false
+  propagate_inside_route_tables_vgw = false
+  propagate_mgmt_route_tables_vgw = false
 
   # If enable_vpn_gateway was set to "true", then customer gateways will be created if you also
   # include gateway information below.

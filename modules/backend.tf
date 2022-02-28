@@ -3,9 +3,9 @@
 
 terraform {
   backend "s3" {
-    bucket = "rr-internal-transit-tf-state"
+    bucket = "rr-external-transit-tf-state"
     region = "us-east-1"
-    key = "aws-tf-ftd-internal-vpc.tfstate"
+    key = "aws-tf-ftd-external-vpc.tfstate"
     dynamodb_table = "tf-state"
     encrypt = true
   }
