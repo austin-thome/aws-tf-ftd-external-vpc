@@ -2,7 +2,7 @@
 # Internet and NAT Gateways
 ################################################################################
 # Deploys a single Internet GW, and a NAT GW for each private subnet.
-
+/*
 resource "aws_internet_gateway" "int_gateway" {
   count = var.create_igw ? 1 : 0
   vpc_id = aws_vpc.vpc.id
@@ -41,7 +41,7 @@ resource "aws_eip" "nat_eip" {
     Name = "${var.name}-${count.index+1}"
   }
 }
-
+*/
 ################################################################################
 # VPN Gateway
 ################################################################################

@@ -2,9 +2,9 @@
 # Subnets
 ################################################################################
 
-resource "aws_subnet" "public" {
-  count = length(var.public_subnets)
-  cidr_block = element(var.public_subnets, count.index)
+resource "aws_subnet" "outside" {
+  count = length(var.outside_subnets)
+  cidr_block = element(var.outside_subnets, count.index)
   map_public_ip_on_launch = var.map_public_ip_on_launch
   vpc_id = aws_vpc.vpc.id
   availability_zone = element(var.azs, count.index)
@@ -17,13 +17,13 @@ resource "aws_subnet" "public" {
 
 
   tags = {
-    Name = "${var.name}-pub-${count.index+1}"
+    Name = "${var.name}-OUT-${count.index+1}"
   }
 }
 
-resource "aws_subnet" "private" {
-  count = length(var.private_subnets)
-  cidr_block = element(var.private_subnets, count.index)
+resource "aws_subnet" "inside" {
+  count = length(var.inside_subnets)
+  cidr_block = element(var.inside_subnets, count.index)
   map_public_ip_on_launch = var.map_public_ip_on_launch
   vpc_id = aws_vpc.vpc.id
   availability_zone = element(var.azs, count.index)
@@ -35,13 +35,13 @@ resource "aws_subnet" "private" {
   assign_ipv6_address_on_creation = var.assign_ipv6_address_on_creation
 
   tags = {
-    Name = "${var.name}-priv-${count.index+1}"
+    Name = "${var.name}-IN-${count.index+1}"
   }
 }
 
-resource "aws_subnet" "database" {
-  count = length(var.database_subnets)
-  cidr_block = element(var.database_subnets, count.index)
+resource "aws_subnet" "mgmt" {
+  count = length(var.mgmt_subnets)
+  cidr_block = element(var.mgmt_subnets, count.index)
   map_public_ip_on_launch = var.map_public_ip_on_launch
   vpc_id = aws_vpc.vpc.id
   availability_zone = element(var.azs, count.index)
@@ -53,6 +53,6 @@ resource "aws_subnet" "database" {
   assign_ipv6_address_on_creation = var.assign_ipv6_address_on_creation
 
   tags = {
-    Name = "${var.name}-db-${count.index+1}"
+    Name = "${var.name}-MGMT-${count.index+1}"
   }
 }

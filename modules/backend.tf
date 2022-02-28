@@ -4,7 +4,7 @@
 terraform {
   backend "s3" {
     bucket = "example-s3-bucket"
-    region = "us-west-1"
+    region = "us-east-1"
     key = "example/example.tfstate"
     dynamodb_table = "example-tf-state"
     encrypt = true

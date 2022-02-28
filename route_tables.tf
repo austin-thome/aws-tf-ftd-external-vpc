@@ -1,15 +1,15 @@
 ################################################################################
 # Public Route Table
 ################################################################################
-# Deploys a single custom route table associated with each public subnet.
+# Deploys a single custom route table associated with each outside subnet.
 # Includes routes to Internet Gateway and local VPC.
 
-resource "aws_route_table" "public" {
+resource "aws_route_table" "outside" {
   vpc_id = aws_vpc.vpc.id
   # depends_on = [aws_internet_gateway.int_gateway]
 
   tags = {
-    Name = "${var.name}-Public"
+    Name = "${var.name}-OUT-RT"
   }
 
   # route {
@@ -17,11 +17,11 @@ resource "aws_route_table" "public" {
   #   gateway_id = aws_internet_gateway.int_gateway.id
   # }
 }
-
+/*
 resource "aws_route" "public_internet_gateway" {
   count = var.create_igw ? 1 : 0
 
-  route_table_id         = aws_route_table.public.id
+  route_table_id         = aws_route_table.outside.id
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.int_gateway[0].id
 
@@ -29,26 +29,26 @@ resource "aws_route" "public_internet_gateway" {
     create = "5m"
   }
 }
-
+*/
 resource "aws_route_table_association" "AssociationForRouteTablePublic" {
-  count = length(var.public_subnets)
-  subnet_id = element(aws_subnet.public.*.id,count.index)
-  route_table_id = element(aws_route_table.public.*.id,count.index)
+  count = length(var.outside_subnets)
+  subnet_id = element(aws_subnet.outside.*.id,count.index)
+  route_table_id = element(aws_route_table.outside.*.id,count.index)
 }
 
 ################################################################################
 # Private Route Tables
 ################################################################################
-# Deploys route tables associated with each private subnet.
-# Each table includes a route to the NAT GW in the corresponding public subnet and a route to the local VPC.
+# Deploys route tables associated with each inside subnet.
+# Each table includes a route to the NAT GW in the corresponding outside subnet and a route to the local VPC.
 
-resource "aws_route_table" "private" {
-  count = length(var.private_subnets)
+resource "aws_route_table" "inside" {
+  count = length(var.inside_subnets)
   vpc_id = aws_vpc.vpc.id
   # depends_on = [aws_internet_gateway.igw]
 
   tags = {
-    Name = "${var.name}-Priv-${count.index+1}"
+    Name = "${var.name}-IN-${count.index+1}"
   }
 
   # route {
@@ -56,11 +56,11 @@ resource "aws_route_table" "private" {
   #   gateway_id = aws_nat_gateway.nat_gateway[count.index].id
   # }
 }
-
+/*
 resource "aws_route" "nat_gateway_priv" {
-  count = var.create_igw && length(var.private_subnets) > 0 ? 1 : 0
+  count = var.create_igw && length(var.inside_subnets) > 0 ? 1 : 0
 
-  route_table_id         = aws_route_table.private[count.index].id
+  route_table_id         = aws_route_table.inside[count.index].id
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_nat_gateway.nat_gateway[0].id
 
@@ -68,32 +68,32 @@ resource "aws_route" "nat_gateway_priv" {
     create = "5m"
   }
 }
-
+*/
 resource "aws_route_table_association" "AssociationForRouteTablePrivate" {
-  count = length(var.private_subnets)
-  subnet_id = element(aws_subnet.private.*.id,count.index)
-  route_table_id = element(aws_route_table.private.*.id,count.index)
+  count = length(var.inside_subnets)
+  subnet_id = element(aws_subnet.inside.*.id,count.index)
+  route_table_id = element(aws_route_table.inside.*.id,count.index)
 }
 
 ################################################################################
 # Database Route Tables
 ################################################################################
-# Each table includes a route to the NAT GW in the corresponding public subnet and a route to the local VPC.
+# Each table includes a route to the NAT GW in the corresponding outside subnet and a route to the local VPC.
 
-resource "aws_route_table" "database" {
-  count = length(var.database_subnets)
+resource "aws_route_table" "mgmt" {
+  count = length(var.mgmt_subnets)
   vpc_id = aws_vpc.vpc.id
   # depends_on = [aws_internet_gateway.igw]
 
   tags = {
-    Name = "${var.name}-DB-${count.index+1}"
+    Name = "${var.name}-MGMT-${count.index+1}"
   }
 }
-
+/*
 resource "aws_route" "nat_gateway_db" {
-  count = var.create_igw && length(var.database_subnets) > 0 ? 1 : 0
+  count = var.create_igw && length(var.mgmt_subnets) > 0 ? 1 : 0
 
-  route_table_id         = aws_route_table.database[count.index].id
+  route_table_id         = aws_route_table.mgmt[count.index].id
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_nat_gateway.nat_gateway[0].id
 
@@ -101,9 +101,9 @@ resource "aws_route" "nat_gateway_db" {
     create = "5m"
   }
 }
-
+*/
 resource "aws_route_table_association" "AssociationForRouteTableDB" {
-  count = length(var.database_subnets)
-  subnet_id = element(aws_subnet.database.*.id,count.index)
-  route_table_id = element(aws_route_table.database.*.id,count.index)
+  count = length(var.mgmt_subnets)
+  subnet_id = element(aws_subnet.mgmt.*.id,count.index)
+  route_table_id = element(aws_route_table.mgmt.*.id,count.index)
 }

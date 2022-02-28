@@ -50,19 +50,19 @@ variable "assign_generated_ipv6_cidr_block" {
 
 ## SUBNETS
 
-variable "public_subnets" {
+variable "inside_subnets" {
   type = list(string)
   description = ""
   default = []
 }
 
-variable "private_subnets" {
+variable "outside_subnets" {
   type = list(string)
   description = ""
   default = []
 }
 
-variable "database_subnets" {
+variable "mgmt_subnets" {
   type = list(string)
   description = ""
   default = []
