@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 module "vpc" {
-  source = ".."
+  source = "../"
   # The resources for this file live two directories above, in the root directory.
 
   name = "ftd-internal"

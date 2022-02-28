@@ -13,12 +13,12 @@ resource "aws_internet_gateway" "int_gateway" {
 }
 
 resource "aws_nat_gateway" "nat_gateway" {
-  count = var.create_igw && length(var.public_subnets) > 0 ? length(var.public_subnets) : 0
+  count = var.create_igw && length(var.outside_subnets) > 0 ? length(var.outside_subnets) : 0
   # ? 1 : 0
 
   allocation_id = element(aws_eip.nat_eip.*.id,count.index)
   # connectivity_type = var.connectivity_type
-  subnet_id = element(aws_subnet.public.*.id,count.index)
+  subnet_id = element(aws_subnet.outside.*.id,count.index)
 
   tags = {
     Name = "${var.name}-${count.index+1}"
@@ -26,7 +26,7 @@ resource "aws_nat_gateway" "nat_gateway" {
 }
 
 resource "aws_eip" "nat_eip" {
-  count = var.create_igw && length(var.public_subnets) > 0 ? length(var.public_subnets) : 0
+  count = var.create_igw && length(var.outside_subnets) > 0 ? length(var.outside_subnets) : 0
 
   # address = element(var.address,count.index)
   # associate_with_private_ip = element(var.associate_with_private_ip,count.index)
@@ -65,10 +65,10 @@ resource "aws_vpn_gateway_attachment" "vgw_attach" {
   vpn_gateway_id = var.vpn_gateway_id
 }
 
-resource "aws_vpn_gateway_route_propagation" "public" {
-  count = var.propagate_public_route_tables_vgw && (var.enable_vpn_gateway || var.vpn_gateway_id != "") ? 1 : 0
+resource "aws_vpn_gateway_route_propagation" "outside" {
+  count = var.propagate_outside_route_tables_vgw && (var.enable_vpn_gateway || var.vpn_gateway_id != "") ? 1 : 0
 
-  route_table_id = element(aws_route_table.public.*.id, count.index)
+  route_table_id = element(aws_route_table.outside.*.id, count.index)
   vpn_gateway_id = element(
     concat(
       aws_vpn_gateway.vgw.*.id,
@@ -78,10 +78,10 @@ resource "aws_vpn_gateway_route_propagation" "public" {
   )
 }
 
-resource "aws_vpn_gateway_route_propagation" "private" {
-  count = var.propagate_private_route_tables_vgw && (var.enable_vpn_gateway || var.vpn_gateway_id != "") ? length(var.private_subnets) : 0
+resource "aws_vpn_gateway_route_propagation" "inside" {
+  count = var.propagate_inside_route_tables_vgw && (var.enable_vpn_gateway || var.vpn_gateway_id != "") ? length(var.inside_subnets) : 0
 
-  route_table_id = element(aws_route_table.private.*.id, count.index)
+  route_table_id = element(aws_route_table.inside.*.id, count.index)
   vpn_gateway_id = element(
     concat(
       aws_vpn_gateway.vgw.*.id,
@@ -91,10 +91,10 @@ resource "aws_vpn_gateway_route_propagation" "private" {
   )
 }
 
-resource "aws_vpn_gateway_route_propagation" "database" {
-  count = var.propagate_database_route_tables_vgw && (var.enable_vpn_gateway || var.vpn_gateway_id != "") ? length(var.database_subnets) : 0
+resource "aws_vpn_gateway_route_propagation" "mgmt" {
+  count = var.propagate_mgmt_route_tables_vgw && (var.enable_vpn_gateway || var.vpn_gateway_id != "") ? length(var.mgmt_subnets) : 0
 
-  route_table_id = element(aws_route_table.database.*.id, count.index)
+  route_table_id = element(aws_route_table.mgmt.*.id, count.index)
   vpn_gateway_id = element(
     concat(
       aws_vpn_gateway.vgw.*.id,
