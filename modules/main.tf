@@ -11,11 +11,11 @@ module "ftd_vpc" {
   source = "../"
 
   # This name will be attached at the front of all created resources for easy identification.
-  name = "ftd-example"
+  name = "ftd-external"
 
   # CIDR block for VPC. Must be at least /24
   # 10.0.0.0/8 is reserved for EC2 classic.
-  cidr = "10.0.1.0/24"
+  cidr = "172.20.65.0/24"
 
   # Mark as true to create and Internet Gateway for public traffic.
   # Set to false if deploying for a purely internal environment.
@@ -30,17 +30,20 @@ module "ftd_vpc" {
   # Each subnet type must have as many ranges as there are provided AZs.
   # If two AZs are provided, then each block must contain two ranges - and so on.
   inside_subnets = [
-    "10.0.1.0/28",
-    "10.0.1.16/28"]
+    "172.20.65.0/28",
+    "172.20.65.16/28"
+  ]
   outside_subnets = [
-    "10.0.1.32/28",
-    "10.0.1.48/28"]
+    "172.20.65.32/28",
+    "172.20.65.48/28"
+  ]
   mgmt_subnets = [
-    "10.0.1.64/28",
-    "10.0.1.80/28"]
+    "172.20.65.64/28",
+    "172.20.65.80/28"
+  ]
   diag_subnets = [
-    "10.0.1.96/28",
-    "10.0.1.112/28"
+    "172.20.65.96/28",
+    "172.20.65.112/28"
   ]
 
   # VPC flow log options.
@@ -84,6 +87,6 @@ module "ftd_vpc" {
 
   # Name to append to the end of the secret in Secrets Manager holding the FTD TLS key.
   # My preference is to add the date and time of template deployment, but you can use whatever you want.
-  secret_name = "test-key-8"
+  secret_name = "test-key"
 }
 
